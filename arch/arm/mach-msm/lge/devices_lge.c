@@ -38,6 +38,10 @@
 #include "lge_boot_time_checker.h"
 #endif
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <linux/memblock.h>
+#endif
+
 /* setting whether uart console is enalbed or disabled */
 static int uart_console_mode = 0;
 
@@ -491,6 +495,27 @@ void __init lge_add_persistent_ram(void)
 
 void __init lge_reserve(void)
 {
+#ifdef CONFIG_KEXEC_HARDBOOT
+	// Reserve space for hardboot page - just after ram_console,
+	// at the start of second memory bank
+	int ret;
+	phys_addr_t start;
+	struct membank* bank;
+
+	if (meminfo.nr_banks < 2) {
+		pr_err("%s: not enough membank\n", __func__);
+		return;
+	}
+
+	bank = &meminfo.bank[1];
+	start = bank->start + bank->size - LGE_PERSISTENT_RAM_SIZE - SZ_1M;
+	ret = memblock_remove(start, SZ_1M);
+	if(!ret)
+		pr_info("Hardboot page reserved at 0x%X\n", start);
+	else
+		pr_err("Failed to reserve space for hardboot page at 0x%X!\n", start);
+#endif
+    
 	lge_add_persistent_ram();
 }
 
