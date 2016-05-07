@@ -17,6 +17,7 @@
  */
 #include <linux/gpio.h>
 #include <mach/board_lge.h>
+#include <linux/display_state.h>
 #ifdef CONFIG_STATE_NOTIFIER
 #include <linux/state_notifier.h>
 #endif
@@ -36,6 +37,13 @@ static struct dsi_buf lgit_shutdown_tx_buf;
 
 static int __init mipi_lgit_lcd_init(void);
 static bool lgit_lcd_cabc_state(void);
+
+bool display_on = true;
+
+bool is_display_on()
+{
+	return display_on;
+}
 
 #if defined(CONFIG_LGIT_COLOR_ENGINE_SWITCH)
 static int is_color_engine_on = 1;
@@ -115,6 +123,8 @@ int mipi_lgit_lcd_on(struct platform_device *pdev)
 	if (check_stable_lcd_on)
 		mipi_stable_lcd_on(pdev);
 
+	display_on = true;
+
 #ifdef CONFIG_STATE_NOTIFIER
 	state_resume();
 #endif
@@ -192,6 +202,8 @@ int mipi_lgit_lcd_off(struct platform_device *pdev)
 	struct msm_fb_data_type *mfd;
 	
 	pr_info("%s:+ wuxga \n", __func__);
+
+	display_on = false;
 
 #ifdef CONFIG_STATE_NOTIFIER
 	state_suspend();
