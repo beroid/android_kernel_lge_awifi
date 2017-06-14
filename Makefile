@@ -372,6 +372,9 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
            -Wno-shift-overflow -Wno-tautological-compare \
            -Wno-unused-const-variable \
            -Wno-bool-compare \
+           -Wno-int-in-bool-context \
+           -Wno-bool-operation \
+           -Wno-switch-unreachable \
 		   -fno-delete-null-pointer-checks \
 		   -std=gnu89
 
