@@ -17,6 +17,9 @@
  */
 #include <linux/gpio.h>
 #include <mach/board_lge.h>
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
 
 #include "msm_fb.h"
 #include "mipi_dsi.h"
@@ -112,6 +115,10 @@ int mipi_lgit_lcd_on(struct platform_device *pdev)
 	if (check_stable_lcd_on)
 		mipi_stable_lcd_on(pdev);
 
+#ifdef CONFIG_STATE_NOTIFIER
+	state_resume();
+#endif
+
 	mfd = platform_get_drvdata(pdev);
 	if (!mfd)
 		return -ENODEV;
@@ -185,6 +192,10 @@ int mipi_lgit_lcd_off(struct platform_device *pdev)
 	struct msm_fb_data_type *mfd;
 	
 	pr_info("%s:+ wuxga \n", __func__);
+
+#ifdef CONFIG_STATE_NOTIFIER
+	state_suspend();
+#endif
 
 	mfd =  platform_get_drvdata(pdev);
 	
