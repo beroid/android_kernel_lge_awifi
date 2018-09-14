@@ -369,12 +369,13 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-           -Wno-shift-overflow -Wno-tautological-compare \
-           -Wno-unused-const-variable \
-           -Wno-bool-compare \
-           -Wno-int-in-bool-context \
-           -Wno-bool-operation \
-           -Wno-switch-unreachable \
+		   -Wno-shift-overflow -Wno-tautological-compare \
+		   -Wno-unused-const-variable \
+		   -Wno-bool-compare \
+		   -Wno-int-in-bool-context \
+		   -Wno-bool-operation \
+		   -Wno-switch-unreachable \
+		   -Wno-misleading-indentation \
 		   -fno-delete-null-pointer-checks \
 		   -std=gnu89
 
@@ -572,8 +573,14 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 # Disable format-truncation warnings
 KBUILD_CFLAGS   += $(call cc-disable-warning,format-truncation,)
 
+# Disable unused-constant-variable warnings
+KBUILD_CFLAGS += $(call cc-disable-warning,unused-const-variable,)
+
 # Needed to unbreak GCC 7.x and above
 KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
+
+# Disable incompatible-pointer-types warnings
+KBUILD_CFLAGS   += $(call cc-disable-warning,incompatible-pointer-types,)
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
@@ -595,6 +602,11 @@ endif
 # This warning generated too much noise in a regular build.
 # Use make W=1 to enable this warning (see scripts/Makefile.build)
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-pointer-memaccess)
+KBUILD_CFLAGS += $(call cc-disable-warning, stringop-truncation)
+KBUILD_CFLAGS += $(call cc-disable-warning, packed-not-aligned)
+KBUILD_CFLAGS += $(call cc-disable-warning, stringop-overflow)
+KBUILD_CFLAGS += $(call cc-disable-warning, format-overflow)
 
 ifdef CONFIG_FRAME_POINTER
 KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
